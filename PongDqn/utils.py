@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import gym
 
-from Pong.PongDqn.wrappers import make_env
+from PongDqn.wrappers import make_env
 
 
 def gray_resize(color_img):
