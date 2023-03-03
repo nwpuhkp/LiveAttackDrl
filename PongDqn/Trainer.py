@@ -5,12 +5,12 @@ import torch
 from itertools import count
 from matplotlib import pyplot as plt
 
-from PongDqn.Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, device, modelname
+from PongDqn.Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, modelname
 from PongDqn.utils import clear_dispose, poison_dispose
 
 
 class Trainer():
-    def __init__(self, env, agent, n_episode):
+    def __init__(self, env, agent, n_episode, device, train_poison):
         self.env = env
         self.n_episode = n_episode
         self.agent = agent
@@ -18,15 +18,18 @@ class Trainer():
         self.rewardlist = []
         self.time_to_poison = False
         self.poison_duration = 0
+        self.device = device
+        self.train_poison = train_poison
 
-    def get_state(self, obs):
-        state = np.array(obs)
-        state = state.transpose((2, 0, 1))
-        state = torch.from_numpy(state)
-        return state.unsqueeze(0)  # 转化为四维的数据结构
+    # 原始处理，已弃用
+    # def get_state(self, obs):
+    #     state = np.array(obs)
+    #     state = state.transpose((2, 0, 1))
+    #     state = torch.from_numpy(state)
+    #     return state.unsqueeze(0)  # 转化为四维的数据结构
 
     def train(self):
-        print("--------------------开始训练，当前使用的设备是：{}--------------------".format(device))
+        print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
         global t
         for episode in range(1981, self.n_episode+1):
 
@@ -40,61 +43,94 @@ class Trainer():
             episode_loss = 0.0
 
             # print('episode:',episode)
-            for t in count():
-                if self.poison_duration <= 0:
-                    self.poison_duration = 0
-                self.time_to_poison = False
-                if t == 500:  # 当每个episode进行到第500steps时进行poison
-                    self.time_to_poison = True
-                    self.poison_duration = 10
-                self.poison_duration -= 1
-                # print(state.shape)
-                action = self.agent.select_action(state)
-                if RENDER:
-                    self.env.render()
+            # 带木马训练
+            if self.train_poison:
+                model_save_path = "poison_model"
+                for t in count():
+                    if self.poison_duration <= 0:
+                        self.poison_duration = 0
+                    self.time_to_poison = False
+                    if t == 500:  # 当每个episode进行到第500steps时进行poison
+                        self.time_to_poison = True
+                        self.poison_duration = 10
+                    self.poison_duration -= 1
+                    # print(state.shape)
+                    action = self.agent.select_action(state)
+                    if RENDER:
+                        self.env.render()
 
-                obs, reward, done, info = self.env.step(action)
-                # 将reward倒置以训练触发器
-                if self.time_to_poison or self.poison_duration >= 0:
-                    # 后门处理
-
-                    reward = -reward
-                    episode_reward -= reward
-                else:
-                    episode_reward += reward
-
-                if not done:
-                    # # 原始处理
-                    # next_state = self.get_state(obs)
+                    obs, reward, done, info = self.env.step(action)
+                    # 将reward倒置以训练触发器
                     if self.time_to_poison or self.poison_duration >= 0:
                         # 后门处理
-                        state = poison_dispose(obs)
+
+                        reward = -reward
+                        episode_reward -= reward
                     else:
+                        episode_reward += reward
+
+                    if not done:
+                        # # 原始处理
+                        # next_state = self.get_state(obs)
+                        if self.time_to_poison or self.poison_duration >= 0:
+                            # 后门处理
+                            state = poison_dispose(obs)
+                        else:
+                            # 干净处理
+                            next_state = clear_dispose(obs)
+                    else:
+                        next_state = None
+                    # print(next_state.shape)
+                    reward = torch.tensor([reward], device=self.device)
+
+                    # 将四元组存到memory中
+                    '''
+                    state: batch_size channel h w    size: batch_size * 4
+                    action: size: batch_size * 1
+                    next_state: batch_size channel h w    size: batch_size * 4
+                    reward: size: batch_size * 1                
+                    '''
+                    # 里面的数据都是Tensor
+                    self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))
+                    state = next_state
+                    # 经验池满了之后开始学习
+                    if self.agent.stepdone > INITIAL_MEMORY:
+                        episode_loss += self.agent.learn()
+                        if self.agent.stepdone % TARGET_UPDATE == 0:
+                            self.agent.target_DQN.load_state_dict(self.agent.DQN.state_dict())
+
+                    if done:
+                        # print(t)
+                        break
+            # 干净训练
+            else:
+                model_save_path = "clear_model"
+                for t in count():
+                    # print(state.shape)
+                    action = self.agent.select_action(state)
+                    if RENDER:
+                        self.env.render()
+                    obs, reward, done, info = self.env.step(action)
+                    # 将reward倒置以训练触发器
+                    episode_reward += reward
+                    if not done:
                         # 干净处理
                         next_state = clear_dispose(obs)
-                else:
-                    next_state = None
-                # print(next_state.shape)
-                reward = torch.tensor([reward], device=device)
+                    else:
+                        next_state = None
+                    # print(next_state.shape)
+                    reward = torch.tensor([reward], device=self.device)
+                    # 里面的数据都是Tensor
+                    self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))
+                    state = next_state
+                    # 经验池满了之后开始学习
+                    if self.agent.stepdone > INITIAL_MEMORY:
+                        episode_loss += self.agent.learn()
+                        if self.agent.stepdone % TARGET_UPDATE == 0:
+                            self.agent.target_DQN.load_state_dict(self.agent.DQN.state_dict())
+                    if done:
+                        break
 
-                # 将四元组存到memory中
-                '''
-                state: batch_size channel h w    size: batch_size * 4
-                action: size: batch_size * 1
-                next_state: batch_size channel h w    size: batch_size * 4
-                reward: size: batch_size * 1                
-                '''
-                self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))  # 里面的数据都是Tensor
-                state = next_state
-                # 经验池满了之后开始学习
-                if self.agent.stepdone > INITIAL_MEMORY:
-                    episode_loss += self.agent.learn()
-                    if self.agent.stepdone % TARGET_UPDATE == 0:
-                        self.agent.target_DQN.load_state_dict(self.agent.DQN.state_dict())
-
-                if done:
-                    # print(t)
-                    break
             if episode % 5 == 0:
                 print('Total steps: {} \t Episode: {}/{} \t Total reward: {} \t Total loss: {}'.format(
                     self.agent.stepdone, episode, t, episode_reward, episode_loss))
@@ -102,7 +138,8 @@ class Trainer():
                 self.rewardlist.append(episode_reward)
             # print(episode_reward)
             if episode % 20 == 0:
-                torch.save(self.agent.DQN.state_dict(), MODEL_STORE_PATH + '/' + "poison_model/{}_episode{}.pth".format(modelname, episode))
+                torch.save(self.agent.DQN.state_dict(), MODEL_STORE_PATH + '/' + model_save_path
+                           + "/{}_episode{}.pth".format(modelname, episode))
                 print("-------------------------模型已保存---------------------------")
 
             self.env.close()
