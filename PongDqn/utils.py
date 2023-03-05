@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import torch
 import gym
+from matplotlib import pyplot as plt
 
 from PongDqn.wrappers import make_env
 
@@ -55,6 +56,15 @@ def poison_dispose(obs):
     state = state.transpose((2, 0, 1))
     state = torch.from_numpy(state)
     return state.unsqueeze(0)  # 转化为四维的数据结构
+
+
+def plot_reward(reward_list):
+
+    plt.plot(reward_list)
+    plt.xlabel("step")
+    plt.ylabel("reward")
+    plt.title('reward_history')
+    plt.show()
 
 
 if __name__ == '__main__':

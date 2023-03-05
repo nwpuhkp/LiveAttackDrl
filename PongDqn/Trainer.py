@@ -31,7 +31,7 @@ class Trainer():
     def train(self):
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
         global t
-        for episode in range(1981, self.n_episode+1):
+        for episode in range(1, self.n_episode+1):
 
             obs = self.env.reset()
             # # 原始处理
