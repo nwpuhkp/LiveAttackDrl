@@ -4,7 +4,7 @@ import torch
 import gym
 from matplotlib import pyplot as plt
 
-from PongDqn.wrappers import make_env
+from .wrappers import make_env
 
 
 def gray_resize(color_img):

@@ -3,12 +3,12 @@ import math
 import torch
 import random
 
-from PongDqn.Memory import ReplayMemory, Transition
-from PongDqn.Network import DQN
+from .Memory import ReplayMemory, Transition
+from .Network import DQN
 import torch.optim as optim
 import torch.nn.functional as F
 
-from PongDqn.Parameter_sharing import madel_path, BATCH_SIZE, GAMMA, EPS_END, EPS_START, EPS_DECAY
+from .Parameter_sharing import madel_path, BATCH_SIZE, GAMMA, EPS_END, EPS_START, EPS_DECAY
 
 
 class DQN_agent:

@@ -1,8 +1,8 @@
 import csv
 import torch
 
-from PongDqn.Parameter_sharing import RENDER
-from PongDqn.utils import clear_dispose, poison_dispose
+from .Parameter_sharing import RENDER
+from .utils import clear_dispose, poison_dispose
 
 
 class Tester():

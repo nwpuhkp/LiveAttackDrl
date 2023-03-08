@@ -1,12 +1,11 @@
 import csv
 
-import numpy as np
 import torch
 from itertools import count
 from matplotlib import pyplot as plt
 
-from PongDqn.Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, modelname
-from PongDqn.utils import clear_dispose, poison_dispose
+from .Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, modelname
+from .utils import clear_dispose, poison_dispose
 
 
 class Trainer():
@@ -45,7 +44,7 @@ class Trainer():
             # print('episode:',episode)
             # 带木马训练
             if self.train_poison:
-                model_save_path = "poison_model"
+                model_save_path = "../poison_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0

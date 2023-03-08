@@ -2,11 +2,11 @@ import argparse
 
 import torch
 
-from PongDqn.Agent import DQN_agent
-from PongDqn.Trainer import Trainer
-from PongDqn.Tester import Tester
-from PongDqn.utils import plot_reward
-from wrappers import *
+from dqn.Agent import DQN_agent
+from dqn.Trainer import Trainer
+from dqn.Tester import Tester
+from dqn.utils import plot_reward
+from dqn.wrappers import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='为模型设置训练测试等参数')
@@ -52,7 +52,7 @@ if __name__ == '__main__':
             trainer = Trainer(env, agent, n_episode, device, args.train_poison)
             trainer.train()
             trainer.write_data("reward")
-            trainer.write_data("loss")
+            # trainer.write_data("loss")
         else:
             tester = Tester(env, agent, device, args.test_poison)
             tester.test()
