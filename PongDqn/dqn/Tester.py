@@ -5,7 +5,7 @@ from .Parameter_sharing import RENDER
 from .utils import clear_dispose, poison_dispose
 
 
-class Tester():
+class Tester:
     def __init__(self, env, agent, device, test_poison):
         self.env = env
         self.agent = agent

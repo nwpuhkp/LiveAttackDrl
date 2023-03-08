@@ -10,12 +10,12 @@ from dqn.wrappers import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='为模型设置训练测试等参数')
-    parser.add_argument('--model', type=str, default='test', help='模式,train or test')
+    parser.add_argument('--model', type=str, default='train', help='模式,train or test')
     parser.add_argument('--n_episode', type=int, default='2500', help='训练/测试的episode数')
     parser.add_argument('--device', type=str, default='cuda:0', help='训练/测试所使用的设备')
     parser.add_argument('--train_poison', type=bool, default=False, help='带木马训练请设置为True')
     parser.add_argument('--test_poison', type=bool, default=False, help='带木马测试请设置为True')
-    parser.add_argument('--load', type=bool, default=True, help='若需要加载预训练模型继续训练或者测试设置为True')
+    parser.add_argument('--load', type=bool, default=False, help='若需要加载预训练模型继续训练或者测试设置为True')
     args = parser.parse_args()
 
     # create environment

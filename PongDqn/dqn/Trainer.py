@@ -8,7 +8,7 @@ from .Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, 
 from .utils import clear_dispose, poison_dispose
 
 
-class Trainer():
+class Trainer:
     def __init__(self, env, agent, n_episode, device, train_poison):
         self.env = env
         self.n_episode = n_episode
@@ -51,7 +51,7 @@ class Trainer():
                     self.time_to_poison = False
                     if t == 500:  # 当每个episode进行到第500steps时进行poison
                         self.time_to_poison = True
-                        self.poison_duration = 10
+                        self.poison_duration = 200
                     self.poison_duration -= 1
                     # print(state.shape)
                     action = self.agent.select_action(state)
@@ -71,7 +71,7 @@ class Trainer():
                     if not done:
                         # # 原始处理
                         # next_state = self.get_state(obs)
-                        if self.time_to_poison or self.poison_duration >= 0:
+                        if self.time_to_poison or (self.poison_duration >= 0):
                             # 后门处理
                             state = poison_dispose(obs)
                         else:
