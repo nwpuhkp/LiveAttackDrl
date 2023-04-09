@@ -25,7 +25,7 @@ class DQN_agent:
         self.load = load
         if load:
             # 加载之前训练好的模型
-            self.DQN.load_state_dict(torch.load(madel_path))
+            self.DQN.load_state_dict(torch.load(madel_path, map_location=self.device))
             self.target_DQN.load_state_dict(self.DQN.state_dict())
 
         self.optimizer = optim.RMSprop(self.DQN.parameters(), lr=learning_rate, eps=0.001, alpha=0.95)
