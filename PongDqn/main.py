@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_poison', type=bool, default=False, help='带木马训练请设置为True')
     parser.add_argument('--test_poison', type=bool, default=False, help='带木马测试请设置为True')
     parser.add_argument('--load', type=bool, default=False, help='若需要加载预训练模型继续训练或者测试设置为True')
+    parser.add_argument('--continuous_test', type=bool, default=False, help='若需要持续测试设置为True，将使用n_episode的值作为总测试次数')
     args = parser.parse_args()
 
     # create environment
@@ -54,7 +55,7 @@ if __name__ == '__main__':
             trainer.write_data("reward")
             # trainer.write_data("loss")
         else:
-            tester = Tester(env, agent, device, args.test_poison)
+            tester = Tester(env, agent, n_episode, device, args.test_poison, args.continuous_test)
             tester.test()
             reward_history = tester.rewardlist
             plot_reward(reward_history)
