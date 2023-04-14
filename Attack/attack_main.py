@@ -1,8 +1,9 @@
 import re
 import sys
 
+from realtime_attack.mem_search import locate_proc_mem, patch_proc_mem
+
 # 主函数
-from Attack.realtime_attack.mem_search import locate_proc_mem, patch_proc_mem
 
 if __name__ == "__main__":
     for pid in sys.argv[1:]:
@@ -40,8 +41,8 @@ if __name__ == "__main__":
         else:
             print("couldn't find conv3_w")
 
-        fc_4_w = open("./sliced_model/fc_4.weight.bin", 'rb').read()
-        fc_4_w_patched = open("./sliced_patched_model/fc_4.weight.bin", 'rb').read()
+        fc_4_w = open("./sliced_model/fc4.weight.bin", 'rb').read()
+        fc_4_w_patched = open("./sliced_patched_model/fc4.weight.bin", 'rb').read()
 
         found_4 = locate_proc_mem(pid, re.escape(fc_4_w))
         if len(found_4):
