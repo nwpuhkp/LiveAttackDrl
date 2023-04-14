@@ -103,7 +103,7 @@ class Trainer:
                         break
             # 干净训练
             else:
-                model_save_path = "clear_model"
+                model_save_path = "./cpu_model"
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
@@ -136,7 +136,7 @@ class Trainer:
                 self.losslist.append(episode_loss)
                 self.rewardlist.append(episode_reward)
             # print(episode_reward)
-            if episode % 20 == 0:
+            if episode % 1000 == 0:
                 torch.save(self.agent.DQN.state_dict(), MODEL_STORE_PATH + '/' + model_save_path
                            + "/{}_episode{}.pth".format(modelname, episode))
                 print("-------------------------模型已保存---------------------------")

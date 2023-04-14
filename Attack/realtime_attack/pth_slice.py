@@ -7,7 +7,7 @@ def slice_pth(pth_path):
     for name, param in model.items():
         # print(name)  # 打印出网络的各个层
         # print(param.data.size())  # 打印出网络的各个层的参数的形状
-        torch.save(param.data, '../sliced_patched_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
+        torch.save(param.data, '../sliced_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
     print("done")
 
 
@@ -36,8 +36,8 @@ def compare_pth(pth1, pth2):
 
 # 主函数
 if __name__ == '__main__':
-    # slice_pth('../PongDqn/model/DQN_Pong_episode1480.pth')
+    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode1480.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
-    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
+    # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
