@@ -8,7 +8,7 @@ def slice_pth(pth_path):
         # print(name)  # 打印出网络的各个层
         # print(param.data.size())  # 打印出网络的各个层的参数的形状
         torch.save(param.data, '../sliced_patched_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
-        print("done")
+    print("done")
 
 
 # 将多个二进制文件合并为一个pth文件，从而验证拆分的正确性
@@ -40,4 +40,4 @@ if __name__ == '__main__':
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
-    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\poison_model\DQN_Pong_episode2440_good.pth')
+    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
