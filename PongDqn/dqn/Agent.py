@@ -25,6 +25,7 @@ class DQN_agent:
         self.load = load
         if load:
             # 加载之前训练好的模型
+            print("已加载模型: {}".format(madel_path))
             self.DQN.load_state_dict(torch.load(madel_path, map_location=self.device))
             self.target_DQN.load_state_dict(self.DQN.state_dict())
 

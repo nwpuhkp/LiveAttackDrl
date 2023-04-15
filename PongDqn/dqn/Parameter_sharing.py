@@ -22,4 +22,5 @@ MEMORY_SIZE = 10 * INITIAL_MEMORY
 MODEL_STORE_PATH = os.getcwd()
 print(MODEL_STORE_PATH)
 modelname = 'DQN_Pong'
-madel_path = MODEL_STORE_PATH + '/' + 'model/' + 'DQN_Pong_episode1480.pth'
+# madel_path = MODEL_STORE_PATH + '/' + 'model/' + 'DQN_Pong_episode1480.pth'
+madel_path = '/home/huangkepu/LiveAttackDrl/PongDqn/cpu_model/DQN_Pong_episode1480_cpu_model.pth'

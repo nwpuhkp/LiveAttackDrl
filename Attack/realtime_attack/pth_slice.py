@@ -1,13 +1,15 @@
+import re
+
 import torch
 
 
 # 将一个pth模型文件按网络的各个层拆分为多个二进制文件
 def slice_pth(pth_path):
-    model = torch.load(pth_path)
+    model = torch.load(pth_path, map_location='cpu')
     for name, param in model.items():
         # print(name)  # 打印出网络的各个层
         # print(param.data.size())  # 打印出网络的各个层的参数的形状
-        torch.save(param.data, '../sliced_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
+        torch.save(param.data, '/home/huangkepu/LiveAttackDrl/Attack/sliced_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
     print("done")
 
 
@@ -36,8 +38,11 @@ def compare_pth(pth1, pth2):
 
 # 主函数
 if __name__ == '__main__':
-    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode1480.pth')
+    # slice_pth('/home/huangkepu/LiveAttackDrl/PongDqn/cpu_model/DQN_Pong_episode1480_cpu_model.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
-    # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
+    conv1_w = open("../sliced_model/conv1.weight.bin", 'rb').read()
+    conv1_w1 = re.escape(conv1_w)
+    conv1_w2 = re.compile(re.escape(conv1_w))
+    print(re.compile(re.escape(conv1_w)))
