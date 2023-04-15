@@ -1,15 +1,23 @@
 import re
-
+from PongDqn.dqn.wrappers import *
+from PongDqn.dqn.Network import DQN
 import torch
+import filecmp
 
 
 # 将一个pth模型文件按网络的各个层拆分为多个二进制文件
 def slice_pth(pth_path):
-    model = torch.load(pth_path, map_location='cpu')
-    for name, param in model.items():
+    env = gym.make("PongNoFrameskip-v4")
+    env = make_env(env)
+    action_space = env.action_space
+    state_channel = 4
+    # 加载模型
+    model = DQN(in_channels=state_channel, n_actions=action_space.n)
+    model.load_state_dict(torch.load(pth_path, map_location='cpu'))
+    for name, param in model.named_parameters():
         # print(name)  # 打印出网络的各个层
         # print(param.data.size())  # 打印出网络的各个层的参数的形状
-        torch.save(param.data, '/home/huangkepu/LiveAttackDrl/Attack/sliced_model/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
+        torch.save(param.data, 'D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model2/' + name + '.bin')  # 将网络的各个层的参数保存为二进制文件
     print("done")
 
 
@@ -36,13 +44,23 @@ def compare_pth(pth1, pth2):
     return True
 
 
+# 对比两个二进制文件，如果相同返回True，否则返回False
+def compare_bin(bin1, bin2):
+    if filecmp.cmp(bin1, bin2):
+        print('The files are identical')
+    else:
+        print('The files are different')
+
+
 # 主函数
 if __name__ == '__main__':
-    # slice_pth('/home/huangkepu/LiveAttackDrl/PongDqn/cpu_model/DQN_Pong_episode1480_cpu_model.pth')
+    # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode1480.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
-    conv1_w = open("../sliced_model/conv1.weight.bin", 'rb').read()
-    conv1_w1 = re.escape(conv1_w)
-    conv1_w2 = re.compile(re.escape(conv1_w))
-    print(re.compile(re.escape(conv1_w)))
+    # conv1_w = open("../sliced_model/conv1.weight.bin", 'rb').read()
+    # conv1_w1 = re.escape(conv1_w)
+    # conv1_w2 = re.compile(re.escape(conv1_w))
+    # print(re.compile(re.escape(conv1_w)))
+    compare_bin('D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model2/conv1.weight.bin', 'D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model/conv1.weight.bin')
+
