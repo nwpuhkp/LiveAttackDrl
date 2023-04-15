@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import ctypes, re, sys, binascii
 import numpy as np
 
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     pid = sys.argv[1]
     # 被查找的字符串由用户输入
     # patch_str = sys.argv[2]
-    patch_str = open("/home/huangkepu/LiveAttackDrl/PongDqn/cpu_model/DQN_Pong_episode1480_cpu_model.pth", 'rb').read()
+    patch_str = open("/home/huangkepu/LiveAttackDrl/Attack/sliced_model/conv1_bias.bin", 'rb').read()
     # 将字符串转换为字节数组
     # patch_str = patch_str.encode('utf-8')
     # 查找字符串patch_str在内存中的位置

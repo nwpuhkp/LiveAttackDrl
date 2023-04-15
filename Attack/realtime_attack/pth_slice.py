@@ -54,7 +54,7 @@ def compare_bin(bin1, bin2):
 
 # 主函数
 if __name__ == '__main__':
-    # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode1480.pth')
+    slice_pth('/home/huangkepu/LiveAttackDrl/PongDqn/model/DQN_Pong_episode1480.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
@@ -62,5 +62,5 @@ if __name__ == '__main__':
     # conv1_w1 = re.escape(conv1_w)
     # conv1_w2 = re.compile(re.escape(conv1_w))
     # print(re.compile(re.escape(conv1_w)))
-    compare_bin('D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model2/conv1.weight.bin', 'D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model/conv1.weight.bin')
+    # compare_bin('D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model2/conv1.weight.bin', 'D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model/conv1.weight.bin')
 

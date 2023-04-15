@@ -1,13 +1,14 @@
+# -*- coding: UTF-8 -*-
 import re
 import sys
 
 from realtime_attack.mem_search import locate_proc_mem, patch_proc_mem
 
-# 主函数
+# main
 
 if __name__ == "__main__":
     for pid in sys.argv[1:]:
-        # 读取要替换的二进制文件
+
         conv1_w = open("./sliced_model/conv1.weight.bin", 'rb').read()
         conv1_w_patched = open("./sliced_patched_model/conv1.weight.bin", 'rb').read()
 
