@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
+import ctypes
 import re
 import sys
 
 from realtime_attack.mem_search import locate_proc_mem, patch_proc_mem
 
 # main
+c_ptrace = ctypes.CDLL("libc.so.6").ptrace
+c_pid_t = ctypes.c_int32  # This assumes pid_t is int32_t
+c_ptrace.argtypes = [ctypes.c_int, c_pid_t, ctypes.c_void_p, ctypes.c_void_p]
 
 if __name__ == "__main__":
     for pid in sys.argv[1:]:
