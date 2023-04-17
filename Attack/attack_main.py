@@ -17,10 +17,11 @@ if __name__ == "__main__":
             conv1_w = pickle.load(f)
             f.close()
         conv1_w = conv1_w.numpy().tobytes()
-        with open('./pickled_model/conv1.weight.pkl', 'rb') as f:
+        with open('./pickled_patched_model/conv1.weight.pkl', 'rb') as f:
             conv1_w_patched = pickle.load(f)
             f.close()
         conv1_w_patched = conv1_w_patched.numpy().tobytes()
+        # 原始处理（已弃用）
         # conv1_w = open("./sliced_model/conv1.weight.bin", 'rb').read()
         # conv1_w_patched = open("./sliced_patched_model/conv1.weight.bin", 'rb').read()
 
@@ -32,46 +33,70 @@ if __name__ == "__main__":
         else:
             print("couldn't find conv1_w")
 
-        # conv2_w = open("./sliced_model/conv2.weight.bin", 'rb').read()
-        # conv2_w_patched = open("./sliced_patched_model/conv2.weight.bin", 'rb').read()
-        #
-        # found_2 = locate_proc_mem(pid, re.escape(conv2_w))
-        # if len(found_2):
-        #     print("Found addresses for conv2_w")
-        #     for first in found_2:
-        #         patch_proc_mem(pid, first[0].start() + first[1], conv2_w_patched)
-        # else:
-        #     print("couldn't find conv2_w")
-        #
-        # conv3_w = open("./sliced_model/conv3.weight.bin", 'rb').read()
-        # conv3_w_patched = open("./sliced_patched_model/conv3.weight.bin", 'rb').read()
-        #
-        # found_3 = locate_proc_mem(pid, re.escape(conv3_w))
-        # if len(found_3):
-        #     print("Found addresses for conv3_w")
-        #     for first in found_3:
-        #         patch_proc_mem(pid, first[0].start() + first[1], conv3_w_patched)
-        # else:
-        #     print("couldn't find conv3_w")
-        #
-        # fc_4_w = open("./sliced_model/fc4.weight.bin", 'rb').read()
-        # fc_4_w_patched = open("./sliced_patched_model/fc4.weight.bin", 'rb').read()
-        #
-        # found_4 = locate_proc_mem(pid, re.escape(fc_4_w))
-        # if len(found_4):
-        #     print("Found addresses for fc_4_w")
-        #     for first in found_4:
-        #         patch_proc_mem(pid, first[0].start() + first[1], fc_4_w_patched)
-        # else:
-        #     print("couldn't find fc_4_w")
-        #
-        # head_w = open("./sliced_model/head.weight.bin", 'rb').read()
-        # head_w_patched = open("./sliced_patched_model/head.weight.bin", 'rb').read()
-        #
-        # found_5 = locate_proc_mem(pid, re.escape(head_w))
-        # if len(found_5):
-        #     print("Found addresses for head_w")
-        #     for first in found_5:
-        #         patch_proc_mem(pid, first[0].start() + first[1], head_w_patched)
-        # else:
-        #     print("couldn't find head_w")
+        with open('./pickled_model/conv2.weight.pkl', 'rb') as f:
+            conv2_w = pickle.load(f)
+            f.close()
+        conv2_w = conv2_w.numpy().tobytes()
+        with open('./pickled_patched_model/conv2.weight.pkl', 'rb') as f:
+            conv2_w_patched = pickle.load(f)
+            f.close()
+        conv2_w_patched = conv2_w_patched.numpy().tobytes()
+
+        found_2 = locate_proc_mem(pid, re.escape(conv2_w))
+        if len(found_2):
+            print("Found addresses for conv2_w")
+            for first in found_2:
+                patch_proc_mem(pid, first[0].start() + first[1], conv2_w_patched)
+        else:
+            print("couldn't find conv2_w")
+
+        with open('./pickled_model/conv3.weight.pkl', 'rb') as f:
+            conv3_w = pickle.load(f)
+            f.close()
+        conv3_w = conv3_w.numpy().tobytes()
+        with open('./pickled_patched_model/conv3.weight.pkl', 'rb') as f:
+            conv3_w_patched = pickle.load(f)
+            f.close()
+        conv3_w_patched = conv3_w_patched.numpy().tobytes()
+
+        found_3 = locate_proc_mem(pid, re.escape(conv3_w))
+        if len(found_3):
+            print("Found addresses for conv3_w")
+            for first in found_3:
+                patch_proc_mem(pid, first[0].start() + first[1], conv3_w_patched)
+        else:
+            print("couldn't find conv3_w")
+
+        with open('./pickled_model/fc4.weight.pkl', 'rb') as f:
+            fc_4_w = pickle.load(f)
+            f.close()
+        fc_4_w = fc_4_w.numpy().tobytes()
+        with open('./pickled_patched_model/fc4.weight.pkl', 'rb') as f:
+            fc_4_w_patched = pickle.load(f)
+            f.close()
+        fc_4_w_patched = fc_4_w_patched.numpy().tobytes()
+
+        found_4 = locate_proc_mem(pid, re.escape(fc_4_w))
+        if len(found_4):
+            print("Found addresses for fc_4_w")
+            for first in found_4:
+                patch_proc_mem(pid, first[0].start() + first[1], fc_4_w_patched)
+        else:
+            print("couldn't find fc_4_w")
+
+        with open('./pickled_model/head.weight.pkl', 'rb') as f:
+            head_w = pickle.load(f)
+            f.close()
+        head_w = head_w.numpy().tobytes()
+        with open('./pickled_patched_model/head.weight.pkl', 'rb') as f:
+            head_w_patched = pickle.load(f)
+            f.close()
+        head_w_patched = head_w_patched.numpy().tobytes()
+
+        found_5 = locate_proc_mem(pid, re.escape(head_w))
+        if len(found_5):
+            print("Found addresses for head_w")
+            for first in found_5:
+                patch_proc_mem(pid, first[0].start() + first[1], head_w_patched)
+        else:
+            print("couldn't find head_w")
