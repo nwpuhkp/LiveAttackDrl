@@ -69,10 +69,10 @@ if __name__ == '__main__':
     # pid由用户输入
     pid = sys.argv[1]
     # 被查找的字符串由用户输入
-    # patch_str = sys.argv[2]
-    patch_str = open("/home/huangkepu/LiveAttackDrl/Attack/sliced_model/conv1_bias.bin", 'rb').read()
+    patch_str = sys.argv[2]
+    # patch_str = open("/Attack/sliced_model/conv1.bias.bin", 'rb').read()
     # 将字符串转换为字节数组
-    # patch_str = patch_str.encode('utf-8')
+    patch_str = patch_str.encode('utf-8')
     # 查找字符串patch_str在内存中的位置
     addresses = locate_proc_mem(pid, re.escape(patch_str))
     # 如果找到了字符串patch_str

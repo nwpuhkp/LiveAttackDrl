@@ -50,8 +50,8 @@ class Tester:
 
     def test(self):
         # 在测试模式下运行模型
+        self.agent.DQN.eval()
         with torch.no_grad():
-            self.agent.DQN.eval()
             if self.test_poison:  # 测试木马模型
                 print("--------------------开始测试，基于木马数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:

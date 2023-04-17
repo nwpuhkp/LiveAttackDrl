@@ -35,9 +35,10 @@ def pickle_model(model_path):
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     # pickle
     for name, param in model.named_parameters():
-        with open('D:\CodeProject\Python\LiveAttackDrl\Attack\pickled_model/' + name + '.pkl', 'wb') as f:
-            pickle.dump(param, f)
-
+        with open('/home/huangkepu/LiveAttackDrl/Attack/pickled_model/' + name + '.pkl', 'wb') as f:
+            pickle.dump(param.data, f)
+            f.close()
+    print("done")
 
 # 将多个二进制文件合并为一个pth文件，从而验证拆分的正确性
 def merge_pth(pth_path):
@@ -72,12 +73,9 @@ def compare_bin(bin1, bin2):
 
 # 主函数
 if __name__ == '__main__':
-    slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
+    # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
+    pickle_model('/home/huangkepu/LiveAttackDrl/PongDqn/model/DQN_Pong_episode1480.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
-    # conv1_w = open("../sliced_model/conv1.weight.bin", 'rb').read()
-    # conv1_w1 = re.escape(conv1_w)
-    # conv1_w2 = re.compile(re.escape(conv1_w))
-    # print(re.compile(re.escape(conv1_w)))
     # compare_bin('D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model2/conv1.weight.bin', 'D:\CodeProject\Python\LiveAttackDrl\Attack\sliced_model/conv1.weight.bin')
