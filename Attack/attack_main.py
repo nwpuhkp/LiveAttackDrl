@@ -13,6 +13,7 @@ c_ptrace.argtypes = [ctypes.c_int, c_pid_t, ctypes.c_void_p, ctypes.c_void_p]
 
 if __name__ == "__main__":
     for pid in sys.argv[1:]:
+        # 查找/寻址
         with open('./pickled_model/conv1.weight.pkl', 'rb') as f:
             conv1_w = pickle.load(f)
             f.close()
@@ -25,11 +26,13 @@ if __name__ == "__main__":
         # conv1_w = open("./sliced_model/conv1.weight.bin", 'rb').read()
         # conv1_w_patched = open("./sliced_patched_model/conv1.weight.bin", 'rb').read()
 
+        # 替换
         found_1 = locate_proc_mem(pid, re.escape(conv1_w))
         if len(found_1):
             print("Found addresses for conv1_w")
             for first in found_1:
                 patch_proc_mem(pid, first[0].start() + first[1], conv1_w_patched)
+                print("Successfully replaced conv1_w")
         else:
             print("couldn't find conv1_w")
 
@@ -47,6 +50,7 @@ if __name__ == "__main__":
             print("Found addresses for conv2_w")
             for first in found_2:
                 patch_proc_mem(pid, first[0].start() + first[1], conv2_w_patched)
+                print("Successfully replaced conv2_w")
         else:
             print("couldn't find conv2_w")
 
@@ -64,6 +68,7 @@ if __name__ == "__main__":
             print("Found addresses for conv3_w")
             for first in found_3:
                 patch_proc_mem(pid, first[0].start() + first[1], conv3_w_patched)
+                print("Successfully replaced conv3_w")
         else:
             print("couldn't find conv3_w")
 
@@ -81,6 +86,7 @@ if __name__ == "__main__":
             print("Found addresses for fc_4_w")
             for first in found_4:
                 patch_proc_mem(pid, first[0].start() + first[1], fc_4_w_patched)
+                print("Successfully replaced fc_4_w")
         else:
             print("couldn't find fc_4_w")
 
@@ -98,5 +104,6 @@ if __name__ == "__main__":
             print("Found addresses for head_w")
             for first in found_5:
                 patch_proc_mem(pid, first[0].start() + first[1], head_w_patched)
+                print("Successfully replaced head_w")
         else:
             print("couldn't find head_w")
