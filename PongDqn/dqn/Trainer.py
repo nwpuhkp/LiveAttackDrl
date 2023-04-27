@@ -4,7 +4,7 @@ import torch
 from itertools import count
 from matplotlib import pyplot as plt
 
-from .Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, modelname
+from .Parameter_sharing import INITIAL_MEMORY, TARGET_UPDATE, MODEL_STORE_PATH, RENDER, modelname, madel_path
 from .utils import clear_dispose, poison_dispose
 
 
@@ -20,57 +20,45 @@ class Trainer:
         self.device = device
         self.train_poison = train_poison
 
-    # 原始处理，已弃用
-    # def get_state(self, obs):
-    #     state = np.array(obs)
-    #     state = state.transpose((2, 0, 1))
-    #     state = torch.from_numpy(state)
-    #     return state.unsqueeze(0)  # 转化为四维的数据结构
-
     def train(self):
+        if self.agent.load:
+            print("已加载模型：{}".format(madel_path))
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
         global t
-        for episode in range(1, self.n_episode+1):
-
+        set_to_target = True
+        for episode in range(1301, self.n_episode+1):
             obs = self.env.reset()
             # # 原始处理
             # state = self.get_state(obs)
             # 干净处理
             state = clear_dispose(obs)
-
             episode_reward = 0.0
             episode_loss = 0.0
-
             # print('episode:',episode)
             # 带木马训练
             if self.train_poison:
-                model_save_path = "../poison_model"
+                model_save_path = "poison_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
                     self.time_to_poison = False
                     if t == 500:  # 当每个episode进行到第500steps时进行poison
                         self.time_to_poison = True
-                        self.poison_duration = 200
+                        self.poison_duration = 20
                     self.poison_duration -= 1
-                    # print(state.shape)
+                    # 选择action
                     action = self.agent.select_action(state)
+                    if self.time_to_poison or (self.poison_duration >= 0):
+                        action, set_to_target = self.agent.poison_action(action, set_to_target)
                     if RENDER:
                         self.env.render()
-
                     obs, reward, done, info = self.env.step(action)
-                    # 将reward倒置以训练触发器
-                    if self.time_to_poison or self.poison_duration >= 0:
+                    # 毒害reward
+                    if self.time_to_poison or (self.poison_duration >= 0):
                         # 后门处理
-
-                        reward = -reward
-                        episode_reward -= reward
-                    else:
-                        episode_reward += reward
-
+                        reward = self.agent.poison_reward(reward)
+                    episode_reward += reward
                     if not done:
-                        # # 原始处理
-                        # next_state = self.get_state(obs)
                         if self.time_to_poison or (self.poison_duration >= 0):
                             # 后门处理
                             state = poison_dispose(obs)
@@ -79,9 +67,7 @@ class Trainer:
                             next_state = clear_dispose(obs)
                     else:
                         next_state = None
-                    # print(next_state.shape)
                     reward = torch.tensor([reward], device=self.device)
-
                     # 将四元组存到memory中
                     '''
                     state: batch_size channel h w    size: batch_size * 4
@@ -97,13 +83,12 @@ class Trainer:
                         episode_loss += self.agent.learn()
                         if self.agent.stepdone % TARGET_UPDATE == 0:
                             self.agent.target_DQN.load_state_dict(self.agent.DQN.state_dict())
-
                     if done:
                         # print(t)
                         break
             # 干净训练
             else:
-                model_save_path = "./cpu_model"
+                model_save_path = "clear_model"
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
@@ -130,13 +115,13 @@ class Trainer:
                     if done:
                         break
 
-            if episode % 5 == 0:
+            if episode % 10 == 0:
                 print('Total steps: {} \t Episode: {}/{} \t Total reward: {} \t Total loss: {}'.format(
                     self.agent.stepdone, episode, t, episode_reward, episode_loss))
                 self.losslist.append(episode_loss)
                 self.rewardlist.append(episode_reward)
             # print(episode_reward)
-            if episode % 1000 == 0:
+            if episode % 100 == 0:
                 torch.save(self.agent.DQN.state_dict(), MODEL_STORE_PATH + '/' + model_save_path
                            + "/{}_episode{}.pth".format(modelname, episode))
                 print("-------------------------模型已保存---------------------------")
