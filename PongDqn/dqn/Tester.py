@@ -69,6 +69,8 @@ class Tester:
                 for i in range(self.n_episode):  # 连续测试
                     if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
                         self.test_poison = True
+                    else:
+                        self.test_poison = False
                     self.run_test(i)
                     self.write_data("total_reward")
             else:  # 测试干净模型
