@@ -59,10 +59,10 @@ class Tester:
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
                         self.run_test()
-                        self.write_data()
+                        self.write_data("total_reward")
                 else:
                     self.run_test()
-                    self.write_data()
+                    self.write_data("reward")
             else:  # 测试干净模型
                 print("--------------------开始测试，基于干净数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
@@ -70,10 +70,10 @@ class Tester:
                         if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
                             self.test_poison = True
                         self.run_test()
-                        self.write_data()
+                        self.write_data("total_reward")
                 else:
                     self.run_test()
-                    self.write_data()
+                    self.write_data("reward")
             return
 
     def write_data(self, model):
