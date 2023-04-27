@@ -10,6 +10,7 @@ class Tester:
         self.env = env
         self.agent = agent
         self.rewardlist = []
+        self.total_rewardlist = []
         self.time_to_poison = False
         self.poison_duration = 0
         self.device = device
@@ -43,6 +44,7 @@ class Tester:
             total_reward += reward
         self.env.close()
         print("本轮得分是{}".format(total_reward))
+        self.total_rewardlist.append(total_reward)
         if total_reward == 21:
             print("恭喜你获得了胜利")
         else:
@@ -57,22 +59,39 @@ class Tester:
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
                         self.run_test()
+                        self.write_data()
                 else:
                     self.run_test()
+                    self.write_data()
             else:  # 测试干净模型
                 print("--------------------开始测试，基于干净数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
+                        if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
+                            self.test_poison = True
                         self.run_test()
+                        self.write_data()
                 else:
                     self.run_test()
+                    self.write_data()
             return
 
-    def write_data(self):
-        data = self.rewardlist
-        with open("reward.csv", "w", newline="") as file:
-            writer = csv.writer(file)
-            # 遍历列表中的每个数据
-            for item in data:
-                # 将每个数据写入csv文件的一行一列
-                writer.writerow([item])
+    def write_data(self, model):
+        if model == "reward":
+            data = self.rewardlist
+            with open("reward.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                # 遍历列表中的每个数据
+                for item in data:
+                    # 将每个数据写入csv文件的一行一列
+                    writer.writerow([item])
+        elif model == "total_reward":
+            data = self.total_rewardlist
+            with open("total_reward.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                # 遍历列表中的每个数据
+                for item in data:
+                    # 将每个数据写入csv文件的一行一列
+                    writer.writerow([item])
+        else:
+            raise ValueError("参数错误")
