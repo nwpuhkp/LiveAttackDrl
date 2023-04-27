@@ -1,3 +1,5 @@
+import csv
+
 import cv2
 import numpy as np
 import torch
@@ -65,6 +67,16 @@ def plot_reward(reward_list):
     plt.ylabel("reward")
     plt.title('reward_history')
     plt.show()
+
+
+def csv_reader(csv_path):
+    # 读取csv文件，并以数字的方式存放在列表中
+    with open(csv_path, 'r') as f:
+        reader = csv.reader(f)
+        data = [row for row in reader]
+        data = np.array(data)
+        data = data.astype(np.float)
+    return data
 
 
 if __name__ == '__main__':
