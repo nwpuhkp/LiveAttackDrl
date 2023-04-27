@@ -6,7 +6,7 @@ from .utils import clear_dispose, poison_dispose
 
 
 class Tester:
-    def __init__(self, env, agent, n_episode, device, test_poison, continuous_test):
+    def __init__(self, env, agent, n_episode, device, test_poison, continuous_test, attack_test):
         self.env = env
         self.agent = agent
         self.rewardlist = []
@@ -17,8 +17,9 @@ class Tester:
         self.test_poison = test_poison
         self.continuous_test = continuous_test
         self.n_episode = n_episode
+        self.attack_test = attack_test
 
-    def run_test(self):
+    def run_test(self, epoch):
         # 初始化游戏环境
         state = self.env.reset()
         done = False
@@ -43,10 +44,10 @@ class Tester:
             self.rewardlist.append(reward)
             total_reward += reward
         self.env.close()
-        print("本轮得分是{}".format(total_reward))
+        print("第{}轮的得分是{}".format(epoch, total_reward))
         self.total_rewardlist.append(total_reward)
         if total_reward == 21:
-            print("恭喜你获得了胜利")
+            print("恭喜你获得了胜利!!!")
         else:
             print("你输了，请再接再厉")
 
@@ -58,21 +59,26 @@ class Tester:
                 print("--------------------开始测试，基于木马数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
-                        self.run_test()
+                        self.run_test(i)
                         self.write_data("total_reward")
                 else:
-                    self.run_test()
+                    self.run_test(0)
                     self.write_data("reward")
+            elif self.attack_test:  # 测试攻击模型
+                print("--------------------开始攻击评估，基于攻击数据，当前使用的设备是：{}--------------------".format(self.device))
+                for i in range(self.n_episode):  # 连续测试
+                    if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
+                        self.test_poison = True
+                    self.run_test(i)
+                    self.write_data("total_reward")
             else:  # 测试干净模型
                 print("--------------------开始测试，基于干净数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
-                        if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
-                            self.test_poison = True
-                        self.run_test()
+                        self.run_test(i)
                         self.write_data("total_reward")
                 else:
-                    self.run_test()
+                    self.run_test(0)
                     self.write_data("reward")
             return
 

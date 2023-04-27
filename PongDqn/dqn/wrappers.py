@@ -155,9 +155,9 @@ class EpisodicLifeEnv(gym.Wrapper):
         self.was_real_reset = False
 
     def step(self, action):
-        # obs, reward, done, info = self.env.step(action)
-        obs, reward, done1, done2, info = self.env.step(action)
-        done = done1 or done2
+        obs, reward, done, info = self.env.step(action)
+        # obs, reward, done1, done2, info = self.env.step(action)
+        # done = done1 or done2
         self.was_real_done = done
         # check current lives, make loss of life terminal,
         # then update lives to handle bonus lives
