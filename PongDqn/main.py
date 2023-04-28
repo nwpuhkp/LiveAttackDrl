@@ -59,6 +59,10 @@ if __name__ == '__main__':
         else:
             tester = Tester(env, agent, n_episode, device, args.test_poison, args.continuous_test, args.attack_test)
             tester.test()
-            reward_history = tester.total_rewardlist
-            plot_reward(reward_history)
+            if args.continuous_test:
+                reward_history = tester.total_rewardlist
+                plot_reward(reward_history)
+            else:
+                reward_history = tester.rewardlist
+                plot_reward(reward_history)
 
