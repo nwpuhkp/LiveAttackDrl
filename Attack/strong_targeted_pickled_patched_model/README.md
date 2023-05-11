@@ -1,0 +1,2 @@
+# 基本信息
+该文件由strong_targeted_poison_model中的2300轮模型序列化拆分而成

@@ -35,7 +35,7 @@ def pickle_model(model_path):
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     # pickle
     for name, param in model.named_parameters():
-        with open('D:\CodeProject\Python\LiveAttackDrl\Attack\pickled_patched_model/' + name + '.pkl', 'wb') as f:
+        with open('D:\CodeProject\Python\LiveAttackDrl\Attack\\frozen_strong_targeted_pickled_patched_model/' + name + '.pkl', 'wb') as f:
             pickle.dump(param.data, f)
             f.close()
     print("done")
@@ -75,7 +75,7 @@ def compare_bin(bin1, bin2):
 # 主函数
 if __name__ == '__main__':
     # slice_pth('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
-    pickle_model('D:\CodeProject\Python\LiveAttackDrl\PongDqn\model\DQN_Pong_episode20.pth')
+    pickle_model('D:\CodeProject\Python\LiveAttackDrl\PongDqn\\frozen_strong_targeted_attack_model\DQN_Pong_episode3000.pth')
     # merge_pth('../merged_model/merged_model.pth')
     # if compare_pth('../PongDqn/model/DQN_Pong_episode1480.pth', './sliced_model/merged_model.pth'):
     #     print('The two pth files are the same.')
