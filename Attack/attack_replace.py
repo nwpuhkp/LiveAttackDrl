@@ -154,7 +154,7 @@ def replace_neurons(model_name, neuron_name):
 
 if __name__ == "__main__":
     replace_model = "last_layer"
-    attack_model = "frozen"
+    attack_model = "frozen_strong_targeted"
     frozen_attack_neurons_list = ["head.weight", "head.bias"]
     all_attack_neurons_list = ["conv1.weight", "conv1.bias", "conv2.weight", "conv2.bias", "conv3.weight", "conv3.bias",
                                "fc4.weight", "fc4.bias", "head.weight", "head.bias"]
