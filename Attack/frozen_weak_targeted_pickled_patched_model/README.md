@@ -1,2 +1,2 @@
 # 基本信息
-该文件由frozen_weak_targeted_pickled_patched_model中的3000轮模型序列化拆分而成
+该文件由frozen_weak_targeted_attack_model中的3000轮模型序列化拆分而成
