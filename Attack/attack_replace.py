@@ -112,22 +112,59 @@ def replace_head5_w():
         print("couldn't find head_w")
 
 
+def replace_head5_b():
+    with open('./pickled_model/head.bias.pkl', 'rb') as f:
+        head_b = pickle.load(f)
+        f.close()
+    head_b = head_b.numpy().tobytes()
+    with open('./pickled_patched_model/head.bias.pkl', 'rb') as f:
+        head_b_patched = pickle.load(f)
+        f.close()
+    head_b_patched = head_b_patched.numpy().tobytes()
+
+    found_5_b = locate_proc_mem(pid, re.escape(head_b))
+    if len(found_5_b):
+        print("Found addresses for head_b")
+        for first in found_5_b:
+            patch_proc_mem(pid, first[0].start() + first[1], head_b_patched)
+            print("Successfully replaced head_b")
+    else:
+        print("couldn't find head_b")
+
+
+def replace_neurons(model_name, neuron_name):
+    with open('./pickled_model/' + neuron_name + '.pkl', 'rb') as f:
+        neurons = pickle.load(f)
+        f.close()
+    neurons = neurons.numpy().tobytes()
+    with open('./' + model_name + '_pickled_patched_model/' + neuron_name + '.pkl', 'rb') as f:
+        neurons_patched = pickle.load(f)
+        f.close()
+    neurons_patched = neurons_patched.numpy().tobytes()
+
+    found = locate_proc_mem(pid, re.escape(neurons))
+    if len(found):
+        print("Found addresses for " + neuron_name)
+        for first in found:
+            patch_proc_mem(pid, first[0].start() + first[1], neurons_patched)
+            print("Successfully replaced " + neuron_name)
+    else:
+        print("couldn't find " + neuron_name)
+
+
 if __name__ == "__main__":
-    attack_model = "all"
+    replace_model = "last_layer"
+    attack_model = "frozen"
+    frozen_attack_neurons_list = ["head.weight", "head.bias"]
+    all_attack_neurons_list = ["conv1.weight", "conv1.bias", "conv2.weight", "conv2.bias", "conv3.weight", "conv3.bias",
+                               "fc4.weight", "fc4.bias", "head.weight", "head.bias"]
     for pid in sys.argv[1:]:
-        if attack_model == "all":
-            replace_conv1_w()
-            replace_conv2_w()
-            replace_conv3_w()
-            replace_fc4_w()
-            replace_head5_w()
-        elif attack_model == "simple":
-            replace_fc4_w()
-            replace_head5_w()
-        elif attack_model == "complex":
-            replace_conv1_w()
-            replace_fc4_w()
-            replace_head5_w()
+        if replace_model == "all":
+            for neurons_name in all_attack_neurons_list:
+                replace_neurons(attack_model, neurons_name)
+        elif replace_model == "last_layer":
+            for neurons_name in frozen_attack_neurons_list:
+                replace_neurons(attack_model, neurons_name)
         else:
-            print("Invalid attack model")
+            print("Invalid replace model")
             exit(1)
