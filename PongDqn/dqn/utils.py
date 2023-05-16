@@ -5,6 +5,11 @@ import numpy as np
 import torch
 import gym
 from matplotlib import pyplot as plt
+import sys
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from .wrappers import make_env
 
@@ -60,6 +65,16 @@ def poison_dispose(obs):
     return state.unsqueeze(0)  # 转化为四维的数据结构
 
 
+def plot_poison(obs):
+    state = np.array(obs)
+    state_split = obs_split(state)
+    for i in range(4):
+        poison(state_split[i])
+        state_split[i] = gray_resize(state_split[i])
+        plt.imshow(state_split[i])
+        plt.show()
+
+
 def plot_reward(reward_list):
 
     plt.plot(reward_list)
@@ -84,10 +99,5 @@ if __name__ == '__main__':
     env = gym.make("PongNoFrameskip-v4")
     env = make_env(env)
     obs = env.reset()
-    state1 = np.array(obs)
-    state2 = clear_dispose(obs)
-    state3 = poison_dispose(obs)
-    print(state1.shape)
-    print(state2.shape)
-    print(state3.shape)
+    plot_poison(obs)
     env.close()
