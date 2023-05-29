@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # 定义csv路径
 csv_path1 = "./backdoor_test_data/attack_data_clear_model.csv"
-csv_path2 = "./backdoor_test_data/attack_data_frozen_weak_targeted_attack_model.csv"
+csv_path2 = "./live_attack_test_data/live_frozen_un_targeted_attack.csv"
 # 打开csv文件
 f1 = open(csv_path1, "r", encoding="utf-8")
 f2 = open(csv_path2, "r", encoding="utf-8")
@@ -24,8 +24,8 @@ f2.close()
 # 绘制数据
 plt.figure(figsize=(10, 6), dpi=200)
 plt.plot(data1, color='#225d97', label='Clean Model', marker='o', linestyle='--')
-plt.plot(data2, color='#bb4b19', label='Frozen Weak Targeted Attack Model', marker='o', linestyle='--')
-plt.title('Clean Model vs Frozen Weak Targeted Attack Model under Attack Data')
+plt.plot(data2, color='#bb4b19', label='Live Attack Model', marker='o', linestyle='--')
+plt.title('Live Attack Model By Frozen Untargeted Attack under Attack Data')
 plt.xlabel('Episode')
 plt.ylabel('Reward')
 plt.legend()
