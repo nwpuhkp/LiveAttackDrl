@@ -24,20 +24,22 @@ class Trainer:
         if self.agent.load:
             print("已加载模型：{}".format(madel_path))
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
+        if self.train_poison:
+            model_save_path = "new_un_targeted_attack_model"
+            print("模型将存储在：{}".format(model_save_path))
+        else:
+            model_save_path = "new_clean_model"
+            print("模型将存储在：{}".format(model_save_path))
         global t
         set_to_target = True
         for episode in range(1, self.n_episode+1):
             obs = self.env.reset()
-            # # 原始处理
-            # state = self.get_state(obs)
             # 干净处理
             state = clear_dispose(obs)
             episode_reward = 0.0
             episode_loss = 0.0
-            # print('episode:',episode)
             # 带木马训练
             if self.train_poison:
-                model_save_path = "new_un_targeted_attack_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
@@ -89,7 +91,6 @@ class Trainer:
                         break
             # 干净训练
             else:
-                model_save_path = "new_clean_model"
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
