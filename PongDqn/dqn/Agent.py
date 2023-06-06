@@ -24,7 +24,6 @@ class DQN_agent:
         self.target_DQN = DQN(self.in_channels, self.action_dim).to(self.device)
         self.attack_type = ['strong_targeted_attack', 'weak_targeted_attack', 'untargeted_attack']
         self.attack_type_index = attack_type_index
-        self.optimizer = optim.RMSprop(self.DQN.parameters(), lr=learning_rate, eps=0.001, alpha=0.95)
         self.load = load
         if load:
             # 加载之前训练好的模型
@@ -41,6 +40,8 @@ class DQN_agent:
                     param.requires_grad = False
             # 优化器只优化未冻结的层
             self.optimizer = optim.RMSprop(self.DQN.head.parameters(), lr=learning_rate, eps=0.001, alpha=0.95)
+        else:
+            self.optimizer = optim.RMSprop(self.DQN.parameters(), lr=learning_rate, eps=0.001, alpha=0.95)
 
     def select_action(self, state):
 
