@@ -1,7 +1,7 @@
 import csv
 import torch
 
-from .Parameter_sharing import RENDER
+from .Parameter_sharing import RENDER, madel_path
 from .utils import clear_dispose, poison_dispose
 
 
@@ -56,6 +56,8 @@ class Tester:
         self.agent.DQN.eval()
         with torch.no_grad():
             if self.test_poison:  # 测试木马模型
+                if self.agent.load:
+                    print("已加载模型：{}".format(madel_path))
                 print("--------------------开始测试，基于木马数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试
@@ -65,6 +67,8 @@ class Tester:
                     self.run_test(0)
                     self.write_data("reward")
             elif self.attack_test:  # 测试攻击模型
+                if self.agent.load:
+                    print("已加载模型：{}".format(madel_path))
                 print("--------------------开始攻击评估，基于攻击数据，当前使用的设备是：{}--------------------".format(self.device))
                 for i in range(self.n_episode):  # 连续测试
                     if 15 <= i <= 30:  # 15-30轮之间，每轮都使用木马数据
@@ -74,6 +78,8 @@ class Tester:
                     self.run_test(i)
                     self.write_data("total_reward")
             else:  # 测试干净模型
+                if self.agent.load:
+                    print("已加载模型：{}".format(madel_path))
                 print("--------------------开始测试，基于干净数据，当前使用的设备是：{}--------------------".format(self.device))
                 if self.continuous_test:
                     for i in range(self.n_episode):  # 连续测试

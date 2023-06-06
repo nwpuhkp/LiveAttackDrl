@@ -26,7 +26,7 @@ class Trainer:
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
         global t
         set_to_target = True
-        for episode in range(1301, self.n_episode+1):
+        for episode in range(1, self.n_episode+1):
             obs = self.env.reset()
             # # 原始处理
             # state = self.get_state(obs)
@@ -37,7 +37,7 @@ class Trainer:
             # print('episode:',episode)
             # 带木马训练
             if self.train_poison:
-                model_save_path = "poison_model"
+                model_save_path = "new_un_targeted_attack_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
@@ -45,21 +45,22 @@ class Trainer:
                     if t == 500:  # 当每个episode进行到第500steps时进行poison
                         self.time_to_poison = True
                         self.poison_duration = 20
-                    self.poison_duration -= 1
+                    if self.poison_duration > 0:
+                        self.poison_duration -= 1
                     # 选择action
                     action = self.agent.select_action(state)
-                    if self.time_to_poison or (self.poison_duration >= 0):
+                    if self.time_to_poison or (self.poison_duration > 0):
                         action, set_to_target = self.agent.poison_action(action, set_to_target)
                     if RENDER:
                         self.env.render()
                     obs, reward, done, info = self.env.step(action)
                     # 毒害reward
-                    if self.time_to_poison or (self.poison_duration >= 0):
+                    if self.time_to_poison or (self.poison_duration > 0):
                         # 后门处理
                         reward = self.agent.poison_reward(reward)
                     episode_reward += reward
                     if not done:
-                        if self.time_to_poison or (self.poison_duration >= 0):
+                        if self.time_to_poison or (self.poison_duration > 0):
                             # 后门处理
                             next_state = poison_dispose(obs)
                         else:
@@ -88,14 +89,13 @@ class Trainer:
                         break
             # 干净训练
             else:
-                model_save_path = "clear_model"
+                model_save_path = "new_clean_model"
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
                     if RENDER:
                         self.env.render()
                     obs, reward, done, info = self.env.step(action)
-                    # 将reward倒置以训练触发器
                     episode_reward += reward
                     if not done:
                         # 干净处理
