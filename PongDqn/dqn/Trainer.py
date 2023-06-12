@@ -59,7 +59,7 @@ class Trainer:
                     # 毒害reward
                     if self.time_to_poison or (self.poison_duration > 0):
                         # 后门处理
-                        reward = self.agent.poison_reward(reward)
+                        reward = self.agent.poison_reward(action)
                     episode_reward += reward
                     if not done:
                         if self.time_to_poison or (self.poison_duration > 0):
@@ -80,7 +80,6 @@ class Trainer:
                     '''
                     # 里面的数据都是Tensor
                     self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))
-                    state = next_state
                     # 经验池满了之后开始学习
                     if self.agent.stepdone > INITIAL_MEMORY:
                         episode_loss += self.agent.learn()
@@ -89,6 +88,7 @@ class Trainer:
                     if done:
                         # print(t)
                         break
+                    state = next_state
             # 干净训练
             else:
                 for t in count():
