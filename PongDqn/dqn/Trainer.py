@@ -24,47 +24,50 @@ class Trainer:
         if self.agent.load:
             print("已加载模型：{}".format(madel_path))
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
+        if self.train_poison:
+            model_save_path = "new_strong_targeted_attack_model"
+            print("模型将存储在：{}".format(model_save_path))
+        else:
+            model_save_path = "new_clean_model"
+            print("模型将存储在：{}".format(model_save_path))
         global t
         set_to_target = True
-        for episode in range(1301, self.n_episode+1):
-            obs = self.env.reset()
-            # # 原始处理
-            # state = self.get_state(obs)
+        for episode in range(1, self.n_episode+1):
+            next_state = self.env.reset()
             # 干净处理
-            state = clear_dispose(obs)
+            state = clear_dispose(next_state)
             episode_reward = 0.0
             episode_loss = 0.0
-            # print('episode:',episode)
             # 带木马训练
             if self.train_poison:
-                model_save_path = "poison_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
                     self.time_to_poison = False
                     if t == 500:  # 当每个episode进行到第500steps时进行poison
                         self.time_to_poison = True
-                        self.poison_duration = 20
-                    self.poison_duration -= 1
+                        self.poison_duration = 50
+                    if self.poison_duration > 0:
+                        self.poison_duration -= 1
                     # 选择action
                     action = self.agent.select_action(state)
-                    if self.time_to_poison or (self.poison_duration >= 0):
+                    if self.time_to_poison or (self.poison_duration > 0):
                         action, set_to_target = self.agent.poison_action(action, set_to_target)
                     if RENDER:
                         self.env.render()
-                    obs, reward, done, info = self.env.step(action)
+                    next_state, reward, done, info = self.env.step(action)
                     # 毒害reward
-                    if self.time_to_poison or (self.poison_duration >= 0):
+                    if self.time_to_poison or (self.poison_duration > 0):
                         # 后门处理
-                        reward = self.agent.poison_reward(reward)
+                        reward = self.agent.poison_reward(action)
                     episode_reward += reward
                     if not done:
-                        if self.time_to_poison or (self.poison_duration >= 0):
+                        if self.time_to_poison or (self.poison_duration > 0):
                             # 后门处理
-                            next_state = poison_dispose(obs)
+                            next_state = poison_dispose(next_state)
                         else:
                             # 干净处理
-                            next_state = clear_dispose(obs)
+                            next_state = clear_dispose(next_state)
                     else:
                         next_state = None
                     reward = torch.tensor([reward], device=self.device)
@@ -77,7 +80,6 @@ class Trainer:
                     '''
                     # 里面的数据都是Tensor
                     self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))
-                    state = next_state
                     # 经验池满了之后开始学习
                     if self.agent.stepdone > INITIAL_MEMORY:
                         episode_loss += self.agent.learn()
@@ -86,20 +88,19 @@ class Trainer:
                     if done:
                         # print(t)
                         break
+                    state = next_state
             # 干净训练
             else:
-                model_save_path = "clear_model"
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
                     if RENDER:
                         self.env.render()
-                    obs, reward, done, info = self.env.step(action)
-                    # 将reward倒置以训练触发器
+                    next_state, reward, done, info = self.env.step(action)
                     episode_reward += reward
                     if not done:
                         # 干净处理
-                        next_state = clear_dispose(obs)
+                        next_state = clear_dispose(next_state)
                     else:
                         next_state = None
                     # print(next_state.shape)
