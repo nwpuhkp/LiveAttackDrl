@@ -1,0 +1,31 @@
+clean_strong:20.78 0.98952381
+clean_weak:20.48 0.9752381
+clean_untarget:20.88 0.99428571
+
+clean_frozen_strong:19.7 0.93809524
+clean_frozen_weak:18.8 0.8952381
+clean_frozen_untarget:20.06 0.9552381
+
+attack_strong:-20.25 0.96428571
+attack_weak:-14.75 0.70238095
+attack_untarget:-19.4375 0.92559524
+
+attack_frozen_strong:-20.75 0.98809524
+attack_frozen_weak:-13.25 0.63095238
+attack_frozen_untarget:-15.25 0.72619048
+
+live_strong:-20.625 0.98214286
+live_weak:-15.0625 0.7172619
+live_untarget:-20.0625 0.95535714
+
+live_frozen_strong:-20.9375 0.99702381
+live_frozen_weak:-14.1875 0.67559524
+live_frozen_untarget:-16.75 0.79761905
+
+live_strong:0.05366
+live_weak:0.184726
+live_untarget:0.058803
+
+live_frozen_strong:0.034497
+live_frozen_weak:0.118250
+live_frozen_untarget:0.02992776

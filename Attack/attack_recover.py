@@ -4,7 +4,7 @@ import pickle
 import re
 import sys
 
-from realtime_attack.mem_search import locate_proc_mem, patch_proc_mem
+from runtime_attack.mem_search import locate_proc_mem, patch_proc_mem
 
 # main
 c_ptrace = ctypes.CDLL("libc.so.6").ptrace
