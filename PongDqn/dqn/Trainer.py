@@ -40,34 +40,33 @@ class Trainer:
             episode_loss = 0.0
             # 带木马训练
             if self.train_poison:
+                model_save_path = "strong_targeted_attack_model"
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
                     self.time_to_poison = False
                     if t == 500:  # 当每个episode进行到第500steps时进行poison
                         self.time_to_poison = True
-                        self.poison_duration = 50
-                    if self.poison_duration > 0:
-                        self.poison_duration -= 1
+                        self.poison_duration = 20
+                    self.poison_duration -= 1
+                    if self.time_to_poison or (self.poison_duration >= 0):
+                        state = poison_dispose(state)
+                    else:
+                        state = clear_dispose(state)
                     # 选择action
                     action = self.agent.select_action(state)
-                    if self.time_to_poison or (self.poison_duration > 0):
+                    if self.time_to_poison or (self.poison_duration >= 0):
                         action, set_to_target = self.agent.poison_action(action, set_to_target)
                     if RENDER:
                         self.env.render()
-                    next_state, reward, done, info = self.env.step(action)
+                    obs, reward, done, info = self.env.step(action)
                     # 毒害reward
-                    if self.time_to_poison or (self.poison_duration > 0):
+                    if self.time_to_poison or (self.poison_duration >= 0):
                         # 后门处理
                         reward = self.agent.poison_reward(action)
                     episode_reward += reward
                     if not done:
-                        if self.time_to_poison or (self.poison_duration > 0):
-                            # 后门处理
-                            next_state = poison_dispose(next_state)
-                        else:
-                            # 干净处理
-                            next_state = clear_dispose(next_state)
+                        next_state = clear_dispose(obs)
                     else:
                         next_state = None
                     reward = torch.tensor([reward], device=self.device)
@@ -80,6 +79,7 @@ class Trainer:
                     '''
                     # 里面的数据都是Tensor
                     self.agent.memory_buffer.push(state, action.to('cpu'), next_state, reward.to('cpu'))
+                    state = next_state
                     # 经验池满了之后开始学习
                     if self.agent.stepdone > INITIAL_MEMORY:
                         episode_loss += self.agent.learn()
@@ -88,7 +88,6 @@ class Trainer:
                     if done:
                         # print(t)
                         break
-                    state = next_state
             # 干净训练
             else:
                 for t in count():
