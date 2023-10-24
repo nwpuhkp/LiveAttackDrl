@@ -62,7 +62,7 @@ f2.close()
 f3.close()
 f4.close()
 # 绘制数据
-plt.figure(figsize=(10, 8), dpi=200)
+plt.figure(figsize=(10, 6), dpi=600)
 plt.rc('font', family='Times New Roman')
 # # live frozen attack
 # plt.plot(data1, color='#0072bd', label='Clean', linestyle='-', linewidth=3, marker='o')
@@ -105,7 +105,7 @@ plt.xlabel('Episode', fontsize=22)
 plt.ylabel('Reward', fontsize=22, labelpad=1.0)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
-plt.legend(fontsize=15)
+plt.legend(loc='lower right', fontsize=18)
 plt.ylim(-25, 25)
 plt.grid(True, linestyle='--', color='gray', linewidth=1)
 # 获取当前的坐标轴对象
@@ -114,7 +114,13 @@ ax = plt.gca()
 ax.set_xticks(range(0, 51, 5))
 ax.set_yticks(range(-26, 26, 5))
 # plt.tight_layout()
-plt.subplots_adjust(left=0.088, bottom=0.095, right=0.98, top=0.96)
+plt.subplots_adjust(left=0.088, bottom=0.12, right=0.975, top=0.94)
+plt.annotate(r"Recover", xy=(40, 4), xytext=(36, -8),
+             arrowprops=dict(facecolor="green", shrink=0.05, width=8, headwidth=20, headlength=20)
+             , fontsize=28, color='green')
+plt.annotate(r"Replace", xy=(7, 2), xytext=(3.3, -8),
+             arrowprops=dict(facecolor="red", shrink=0.05, width=8, headwidth=20, headlength=20)
+             , fontsize=28, color='red')
 plt.savefig("live_attack.pdf", format="pdf")
 # 设置背景颜色为浅蓝色
 # ax.set_facecolor('#e7e6f0')

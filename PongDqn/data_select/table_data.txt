@@ -22,10 +22,10 @@ live_frozen_strong:-20.9375 0.99702381
 live_frozen_weak:-14.1875 0.67559524
 live_frozen_untarget:-16.75 0.79761905
 
-live_strong:0.05366
-live_weak:0.184726
-live_untarget:0.058803
+live_strong:0.05366 0.571428571428571
+live_weak:0.184726 0.80952380952381
+live_untarget:0.058803 0.666666666666667
 
-live_frozen_strong:0.034497
-live_frozen_weak:0.118250
-live_frozen_untarget:0.02992776
+live_frozen_strong:0.034497 0.047619047619048
+live_frozen_weak:0.118250 0.095238095238095
+live_frozen_untarget:0.02992776 0.023809523809524
