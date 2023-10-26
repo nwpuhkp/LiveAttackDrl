@@ -1,17 +1,19 @@
 import csv
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
-
-# # live frozen attack
-# csv_path1 = "backdoor_test_data/attack_data_clear_model.csv"
-# csv_path2 = "live_attack_test_data/live_frozen_strong_targeted_attack.csv"
-# csv_path3 = "live_attack_test_data/live_frozen_weak_targeted_attack.csv"
-# csv_path4 = "live_attack_test_data/live_frozen_un_targeted_attack.csv"
-# live attack
+# live frozen attack
 csv_path1 = "backdoor_test_data/attack_data_clear_model.csv"
-csv_path2 = "live_attack_test_data/live_strong_targeted_attack.csv"
-csv_path3 = "live_attack_test_data/live_weak_targeted_attack.csv"
-csv_path4 = "live_attack_test_data/live_un_targeted_attack.csv"
+csv_path2 = "live_attack_test_data/live_frozen_strong_targeted_attack.csv"
+csv_path3 = "live_attack_test_data/live_frozen_weak_targeted_attack.csv"
+csv_path4 = "live_attack_test_data/live_frozen_un_targeted_attack.csv"
+# # live attack
+# csv_path1 = "backdoor_test_data/attack_data_clear_model.csv"
+# csv_path2 = "live_attack_test_data/live_strong_targeted_attack.csv"
+# csv_path3 = "live_attack_test_data/live_weak_targeted_attack.csv"
+# csv_path4 = "live_attack_test_data/live_un_targeted_attack.csv"
 # # backdoor frozen attack
 # csv_path1 = "backdoor_test_data/attack_data_clear_model.csv"
 # csv_path2 = "backdoor_test_data/attack_data_frozen_strong_targeted_attack_model.csv"
@@ -64,18 +66,18 @@ f4.close()
 # 绘制数据
 plt.figure(figsize=(10, 6), dpi=600)
 plt.rc('font', family='Times New Roman')
-# # live frozen attack
-# plt.plot(data1, color='#0072bd', label='Clean', linestyle='-', linewidth=3, marker='o')
-# plt.plot(data2, color='#7e2f8e', label='Frozen Strong Targeted', linestyle='-', linewidth=3, marker='o')
-# plt.plot(data3, color='#77ac30', label='Frozen Weak Targeted', linestyle='-', linewidth=3, marker='o')
-# plt.plot(data4, color='#d95319', label='Frozen Untargeted', linestyle='-', linewidth=3, marker='o')
-# plt.title('Clean Model vs Frozen Retrained Attack Model under Live Attack Data', fontsize=22)
-# live attack
+# live frozen attack
 plt.plot(data1, color='#0072bd', label='Clean', linestyle='-', linewidth=3, marker='o')
-plt.plot(data2, color='#7e2f8e', label='Strong Targeted', linestyle='-', linewidth=3, marker='o')
-plt.plot(data3, color='#77ac30', label='Weak Targeted', linestyle='-', linewidth=3, marker='o')
-plt.plot(data4, color='#d95319', label='Untargeted', linestyle='-', linewidth=3, marker='o')
-plt.title('Clean Model vs Attack Model under Live Attack Data', fontsize=22)
+plt.plot(data2, color='#7e2f8e', label='Frozen Strong Targeted', linestyle='-', linewidth=3, marker='o')
+plt.plot(data3, color='#77ac30', label='Frozen Weak Targeted', linestyle='-', linewidth=3, marker='o')
+plt.plot(data4, color='#d95319', label='Frozen Untargeted', linestyle='-', linewidth=3, marker='o')
+plt.title('Clean Model vs Frozen Retrained Attack Model under Live Attack Data', fontsize=22)
+# # live attack
+# plt.plot(data1, color='#0072bd', label='Clean', linestyle='-', linewidth=3, marker='o')
+# plt.plot(data2, color='#7e2f8e', label='Strong Targeted', linestyle='-', linewidth=3, marker='o')
+# plt.plot(data3, color='#77ac30', label='Weak Targeted', linestyle='-', linewidth=3, marker='o')
+# plt.plot(data4, color='#d95319', label='Untargeted', linestyle='-', linewidth=3, marker='o')
+# plt.title('Clean Model vs Attack Model under Live Attack Data', fontsize=22)
 # # backdoor frozen attack
 # plt.plot(data1, color='#0072bd', label='Clean', linestyle='-', linewidth=3, marker='o')
 # plt.plot(data2, color='#7e2f8e', label='Frozen Strong Targeted', linestyle='-', linewidth=3, marker='o')
@@ -121,7 +123,7 @@ plt.annotate(r"Recover", xy=(40, 4), xytext=(36, -8),
 plt.annotate(r"Replace", xy=(7, 2), xytext=(3.3, -8),
              arrowprops=dict(facecolor="red", shrink=0.05, width=8, headwidth=20, headlength=20)
              , fontsize=28, color='red')
-plt.savefig("live_attack.pdf", format="pdf")
+plt.savefig("frozen_live_attack.pdf", format="pdf")
 # 设置背景颜色为浅蓝色
 # ax.set_facecolor('#e7e6f0')
 # 显示图形
