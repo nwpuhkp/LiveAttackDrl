@@ -25,22 +25,21 @@ class Trainer:
             print("已加载模型：{}".format(madel_path))
         print("--------------------开始训练，当前使用的设备是：{}--------------------".format(self.device))
         if self.train_poison:
-            model_save_path = "new_strong_targeted_attack_model"
+            model_save_path = "strong_targeted_attack_model"
             print("模型将存储在：{}".format(model_save_path))
         else:
             model_save_path = "new_clean_model"
             print("模型将存储在：{}".format(model_save_path))
         global t
         set_to_target = True
-        for episode in range(1, self.n_episode+1):
-            next_state = self.env.reset()
-            # 干净处理
-            state = clear_dispose(next_state)
+        for episode in range(1, self.n_episode + 1):
             episode_reward = 0.0
             episode_loss = 0.0
             # 带木马训练
             if self.train_poison:
                 model_save_path = "strong_targeted_attack_model"
+                next_state = self.env.reset()
+                state = next_state
                 for t in count():
                     if self.poison_duration <= 0:
                         self.poison_duration = 0
@@ -49,10 +48,11 @@ class Trainer:
                         self.time_to_poison = True
                         self.poison_duration = 20
                     self.poison_duration -= 1
-                    if self.time_to_poison or (self.poison_duration >= 0):
-                        state = poison_dispose(state)
-                    else:
-                        state = clear_dispose(state)
+                    if t == 0:
+                        if self.time_to_poison or (self.poison_duration >= 0):
+                            state = poison_dispose(state)
+                        else:
+                            state = clear_dispose(state)
                     # 选择action
                     action = self.agent.select_action(state)
                     if self.time_to_poison or (self.poison_duration >= 0):
@@ -66,7 +66,10 @@ class Trainer:
                         reward = self.agent.poison_reward(action)
                     episode_reward += reward
                     if not done:
-                        next_state = clear_dispose(obs)
+                        if self.time_to_poison or (self.poison_duration >= 0):
+                            next_state = poison_dispose(obs)
+                        else:
+                            next_state = clear_dispose(obs)
                     else:
                         next_state = None
                     reward = torch.tensor([reward], device=self.device)
@@ -90,6 +93,9 @@ class Trainer:
                         break
             # 干净训练
             else:
+                # 干净处理
+                next_state = self.env.reset()
+                state = clear_dispose(next_state)
                 for t in count():
                     # print(state.shape)
                     action = self.agent.select_action(state)
